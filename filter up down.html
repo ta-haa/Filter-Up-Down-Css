@@ -1,0 +1,122 @@
+ 
+    <style>  
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            border: 1px solid #ddd;
+            padding: 12px;
+            text-align: left;
+        }
+
+        th {
+            background-color: #007BFF;
+            color: white;
+            cursor: pointer;
+            position: relative;
+        }
+
+        th:hover {
+            background-color: #0056b3;
+        }
+
+        th.sort-asc::after {
+            content: ' ▲';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        th.sort-desc::after {
+            content: ' ▼';
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #f1f1f1;
+        }
+    </style> 
+    <table id="myTable">
+        <thead>
+            <tr>
+                <th   data-order="asc">Id</th>
+                <th   data-order="asc">Ad</th>
+                <th   data-order="asc">Soyad</th>
+                <th   data-order="asc">Mesaj</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>1</td>
+                <td>Ali</td>
+                <td>Uçar</td>
+                <td>Efenim Nasılsınız</td>
+            </tr>
+            <tr>
+                <td>2</td>
+                <td>Hakan</td>
+                <td>Kaçar</td>
+                <td>Yav kardeşim bu site nedir</td>
+            </tr>
+            <tr>
+                <td>3</td>
+                <td>Veli</td>
+                <td>Uçmaz C</td>
+                <td>Sen naneyi yedin</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const table = document.querySelector('#myTable');
+            const headers = table.querySelectorAll('th');
+
+            headers.forEach(header => {
+                header.addEventListener('click', () => {
+                    const column = header.dataset.column;
+                    const order = header.dataset.order;
+                    const newOrder = order === 'asc' ? 'desc' : 'asc';
+
+                    sortTable(column, newOrder);
+
+                    // Update the header's sort direction
+                    headers.forEach(h => h.dataset.order = 'asc');
+                    header.dataset.order = newOrder;
+                    headers.forEach(h => h.classList.remove('sort-asc', 'sort-desc'));
+                    header.classList.add(newOrder === 'asc' ? 'sort-asc' : 'sort-desc');
+                });
+            });
+
+            function sortTable(column, order) {
+                const rows = Array.from(table.querySelectorAll('tbody tr'));
+                const index = Array.from(headers).findIndex(h => h.dataset.column === column);
+
+                rows.sort((a, b) => {
+                    const cellA = a.children[index].textContent.trim();
+                    const cellB = b.children[index].textContent.trim();
+
+                    if (column === 'id' || column === 'age') {
+                        return order === 'asc' ? cellA - cellB : cellB - cellA;
+                    } else {
+                        return order === 'asc'
+                            ? cellA.localeCompare(cellB)
+                            : cellB.localeCompare(cellA);
+                    }
+                });
+
+                rows.forEach(row => table.querySelector('tbody').appendChild(row));
+            }
+        });
+    </script> 
